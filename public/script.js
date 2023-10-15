@@ -68,7 +68,6 @@ form.addEventListener('submit', function(event) {
     const newTaskText = document.getElementById('ntask').value;
     if (newTaskText) {
         const newTask = {
-          /* _id: Math.floor(Math.random() * 1000000).toString(), */
           text: newTaskText,
           completed: false
         };
