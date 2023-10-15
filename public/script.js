@@ -40,15 +40,13 @@ function updateTask(task) {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(task)
+    body: JSON.stringify({completed: task.completed})
   })
   .then(response => response.json())
   .then(updatedTask => {
     viewTasks(updatedTask);
   })
   .catch(error => console.error(error));
-  console.log("Error en PUT");
-  console.log(updatedTask);
 }
 
 function removeTask(task) {
@@ -70,7 +68,7 @@ form.addEventListener('submit', function(event) {
     const newTaskText = document.getElementById('ntask').value;
     if (newTaskText) {
         const newTask = {
-          _id: Math.floor(Math.random() * 1000000).toString(),
+          /* _id: Math.floor(Math.random() * 1000000).toString(), */
           text: newTaskText,
           completed: false
         };

@@ -13,6 +13,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors());
 
+app.use(express.json()); // Parse JSON requests
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
@@ -33,8 +35,30 @@ async function startServer() {
     const db = client.db(DB_NAME);
     const tasksCollection = db.collection('tasks');
 
-    // Ruta para obtener las tareas desde la base de datos
+    // Path to obtain tasks from MongoDB
     app.get('/tasks', async (req, res) => {
+      const tasks = await tasksCollection.find({}).toArray();
+      res.json(tasks);
+    });
+
+    app.post('/tasks', async (req, res) => {
+      const newTask = req.body;
+      await tasksCollection.insertOne(newTask);
+      const tasks = await tasksCollection.find({}).toArray();
+      res.json(tasks);
+    });
+
+    app.put('/tasks/:id', async (req, res) => {
+      const taskId = req.params.id;
+      const updatedTask = req.body;
+      await tasksCollection.updateOne({ _id: taskId }, { $set: updatedTask });
+      const tasks = await tasksCollection.find({}).toArray();
+      res.json(tasks);
+    });
+
+    app.delete('/tasks/:id', async (req, res) => {
+      const taskId = req.params.id;
+      await tasksCollection.deleteOne({ _id: taskId });
       const tasks = await tasksCollection.find({}).toArray();
       res.json(tasks);
     });
@@ -46,7 +70,7 @@ async function startServer() {
     // Ensures that the client will close when you finish/error
     // If there is an error, this will help prevent the Node.js application from hanging
     // It's a best practice to close the client when you are done with it
-    console.log("Este es el finally");
+    console.log("This is finally");
   }
 }
 
